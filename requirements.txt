@@ -1,0 +1,9 @@
+gunicorn
+Flask==3.1.0
+Flask_HTTPAuth==4.8.0
+flask_mail==0.10.0
+flask_sqlalchemy==3.1.1
+flask_wtf==1.2.2
+pypinyin==0.53.0
+toml==0.10.2
+WTForms==3.2.1
