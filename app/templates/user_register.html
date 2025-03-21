@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- 飘窗 -->
+<div class="floating-window">
+    <div class="layui-card">
+        <div class="layui-card-header">
+            注册须知
+            <span class="close-btn" onclick="closeFloatingWindow()">×</span>
+        </div>
+        <div class="layui-card-body">
+            <p>在注册前，请先阅读 <a href="https://github.com/hexone2086/cxgc_server_wiki" target="_blank" class="guide-link">服务器使用指南</a>。</p>
+        </div>
+    </div>
+</div>
+
+<!-- 注册表单 -->
+<div class="layui-card">
+    <div class="layui-card-header">用户注册</div>
+    <div class="layui-card-body">
+        <form class="layui-form" method="POST">
+            {{ form.hidden_tag() }}
+            <div class="layui-form-item">
+                <label class="layui-form-label">用户名</label>
+                <div class="layui-input-block">
+                    {{ form.username(class="layui-input", placeholder="请输入用户名") }}
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">邮箱</label>
+                <div class="layui-input-block">
+                    {{ form.email(class="layui-input", placeholder="请输入邮箱") }}
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    {{ form.submit(class="layui-btn") }}
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+/* 飘窗样式 */
+.floating-window {
+    position: fixed;
+    width: 300px;
+    z-index: 9999;
+    transition: all 0.05s linear;
+}
+
+/* 关闭按钮样式 */
+.close-btn {
+    float: right;
+    cursor: pointer;
+    font-size: 18px;
+    color: #999;
+}
+
+.close-btn:hover {
+    color: #333;
+}
+
+/* 高亮链接样式 */
+.guide-link {
+    color: #FF5722;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.guide-link:hover {
+    color: #E64A19;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function closeFloatingWindow() {
+    document.querySelector('.floating-window').style.display = 'none';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const floatingWindow = document.querySelector('.floating-window');
+    let posX = Math.random() * (window.innerWidth - 300);
+    let posY = Math.random() * (window.innerHeight - 200);
+    let dx = 2 + Math.random() * 2;
+    let dy = 2 + Math.random() * 2;
+    let animationFrame;
+
+    function moveWindow() {
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+
+        if (posX + 300 >= windowWidth || posX <= 0) {
+            dx = -dx;
+        }
+        if (posY + 200 >= windowHeight || posY <= 0) {
+            dy = -dy;
+        }
+
+        posX += dx;
+        posY += dy;
+
+        floatingWindow.style.left = `${posX}px`;
+        floatingWindow.style.top = `${posY}px`;
+
+        animationFrame = requestAnimationFrame(moveWindow);
+    }
+
+    floatingWindow.addEventListener('mouseenter', () => {
+        cancelAnimationFrame(animationFrame);
+    });
+
+    floatingWindow.addEventListener('mouseleave', () => {
+        moveWindow();
+    });
+
+    floatingWindow.style.left = `${posX}px`;
+    floatingWindow.style.top = `${posY}px`;
+    moveWindow();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>服务器账号自助注册平台</title>
+    <link href="//unpkg.com/layui@2.10.1/dist/css/layui.css" rel="stylesheet">
+    <style>
+        /* 全局样式 */
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f2f2f2;
+        }
+        .layui-container {
+            flex: 1;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            max-width: 1200px; /* 添加最大宽度限制 */
+        }
+        .layui-card {
+            margin-bottom: 20px; /* 卡片间距 */
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="layui-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="flash-messages">
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                  {{ message }}
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </div>
+    <script src="//unpkg.com/layui@2.10.1/dist/layui.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
+<style>
+/* 飘窗样式 */
+.floating-window {
+    position: fixed;
+    width: 300px;
+    z-index: 9999;
+    transition: all 0.05s linear;
+}
+
+.layui-btn-normal {
+    background-color: #1E9FFF;
+}
+.layui-btn-normal:hover {
+    background-color: #1A8FE3;
+}
+.layui-btn-danger {
+    background-color: #ff5722;
+}
+.layui-btn-danger:hover {
+    background-color: #e64a19;
+}
+.flash-messages {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.alert {
+  padding: 15px;
+  margin-bottom: 10px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+
+.alert-error {
+  color: #a94442;
+  background-color: #f2dede;
+  border-color: #ebccd1;
+}
+
+.alert-success {
+  color: #3c763d;
+  background-color: #dff0d8;
+  border-color: #d6e9c6;
+}
+
+.close-btn {
+    float: right;
+    cursor: pointer;
+    font-size: 18px;
+    color: #999;
+}
+
+.close-btn:hover {
+    color: #333;
+}
+</style>

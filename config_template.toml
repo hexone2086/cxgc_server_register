@@ -1,0 +1,14 @@
+[default]
+SECRET_KEY = "your-secret-key"
+SQLALCHEMY_DATABASE_URI = "mysql+pymysql://<sql_username>:<sql_password>@<mysql_address>:<mysql_port>/<sql_name>"
+SQLALCHEMY_TRACK_MODIFICATIONS = false
+
+MAIL_SERVER = "smtp.example.com"
+MAIL_PORT = 587
+MAIL_USE_TLS = true
+MAIL_USERNAME = "your-email@example.com"
+MAIL_PASSWORD = "your-email-password"
+
+[admin]
+username = "admin"    #http basic auth username
+password = "19260817" #http basic auth password

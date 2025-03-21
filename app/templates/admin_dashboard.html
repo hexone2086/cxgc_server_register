@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- 待审批用户 -->
+<div class="layui-card">
+    <div class="layui-card-header">待审批用户</div>
+    <div class="layui-card-body">
+        <table class="layui-table">
+            <thead>
+                <tr>
+                    <th>用户名</th>
+                    <th>邮箱</th>
+                    <th>注册时间</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in pending_users %}
+                <tr>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.create_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                    <td>
+                        <a href="{{ url_for('routes.approve_user', user_id=user.id) }}" class="layui-btn layui-btn-sm">批准</a>
+                        <a href="{{ url_for('routes.delete_user', user_id=user.id) }}" class="layui-btn layui-btn-sm layui-btn-danger" onclick="return confirm('确定要删除该用户吗？')">删除</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- 已审批用户 -->
+<div class="layui-card">
+    <div class="layui-card-header">已审批用户（共 {{ approved_users|length }} 个）</div>
+    <div class="layui-card-body">
+        <table class="layui-table">
+            <thead>
+                <tr>
+                    <th>用户名</th>
+                    <th>邮箱</th>
+                    <th>初始密码</th>
+                    <th>注册时间</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in approved_users %}
+                <tr>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.initial_password }}</td>
+                    <td>{{ user.create_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                    <td>
+                        <button class="layui-btn layui-btn-sm layui-btn-normal" 
+                                onclick="generateCommand({{ user.id }})">生成命令</button>
+                        <a href="{{ url_for('routes.delete_user', user_id=user.id) }}" 
+                           class="layui-btn layui-btn-sm layui-btn-danger" 
+                           onclick="return confirm('确定要删除该用户吗？')">删除</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+function generateCommand(userId) {
+    fetch(`/generate_command/${userId}`)
+        .then(response => response.text())
+        .then(command => {
+            // 复制到剪贴板
+            navigator.clipboard.writeText(command)
+                .then(() => {
+                    layui.layer.msg('命令已复制到剪贴板：' + command, {icon: 1});
+                })
+                .catch(err => {
+                    layui.layer.msg('复制失败，请手动复制', {icon: 2});
+                    console.error('复制失败：', err);
+                });
+        })
+        .catch(error => {
+            layui.layer.msg('生成命令失败', {icon: 2});
+            console.error('生成命令失败：', error);
+        });
+}
+</script>
+{% endblock %}
