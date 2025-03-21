@@ -3,25 +3,29 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail
 from config import Config
 from flask_httpauth import HTTPBasicAuth
+from flask_simple_captcha import CAPTCHA
 
 db = SQLAlchemy()
 mail = Mail()
-
 auth = HTTPBasicAuth()
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
     
+    # Initialize CAPTCHA with config
+    captcha = CAPTCHA(app.config)
+    app.captcha = captcha
+    
+    # Initialize extensions
+    db.init_app(app)
+    mail.init_app(app)
+    
     # 添加 Basic Auth 验证
     @auth.verify_password
     def verify_password(username, password):
         return username == app.config['ADMIN_USERNAME'] and \
                password == app.config['ADMIN_PASSWORD']
-    
-    # Initialize extensions
-    db.init_app(app)
-    mail.init_app(app)
     
     # Import and register blueprints
     from .routes import bp as routes_bp

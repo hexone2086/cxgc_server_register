@@ -8,3 +8,4 @@ pypinyin==0.53.0
 toml==0.10.2
 WTForms==3.2.1
 PyMySQL==1.1.1
+flask-simple-captcha==5.5.4

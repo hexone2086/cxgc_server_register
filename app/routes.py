@@ -7,6 +7,7 @@ import re
 from . import auth
 import string
 import random
+from flask import current_app
 
 bp = Blueprint('routes', __name__)
 
@@ -22,6 +23,18 @@ def generate_password(length=12):
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
+        # 获取验证码文本和哈希值
+        c_text = request.form.get('captcha_text')
+        c_hash = request.form.get('captcha_id')
+        
+        # 将用户输入的验证码转换为大写（确保与生成时一致）
+        c_text = c_text.upper()
+        
+        # 验证码验证
+        if not current_app.captcha.verify(c_text, c_hash):
+            flash('验证码错误，请重试', 'error')
+            return redirect(url_for('routes.register'))
+        
         # 获取原始用户名
         raw_username = form.username.data
         
@@ -60,7 +73,12 @@ def register():
         db.session.commit()
         flash('注册成功！', 'success')
         return redirect(url_for('routes.index'))
-    return render_template('user_register.html', form=form)
+    
+
+    # 生成新的验证码，并确保其大小写与验证逻辑一致
+    captcha_dict = current_app.captcha.create()
+    captcha_dict['text'] = captcha_dict['text'].upper()  # 强制为大写
+    return render_template('user_register.html', form=form, captcha=captcha_dict)
 
 @bp.route('/login')
 def login():

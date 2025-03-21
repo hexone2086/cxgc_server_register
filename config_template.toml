@@ -12,3 +12,12 @@ MAIL_PASSWORD = "your-email-password"
 [admin]
 username = "admin"    #http basic auth username
 password = "19260817" #http basic auth password
+
+[captcha]
+length = 5  # 验证码长度
+digits = false  # 是否仅包含数字
+expire = 300  # 验证码有效期（秒）
+secret_key = "LONG-KEY"  # 验证码加密密钥
+exclude_visually_similar = true  # 是否排除视觉上相似的字符
+background_color = [0, 0, 0]  # 验证码背景颜色（RGB）
+log = false  # 是否记录验证码日志

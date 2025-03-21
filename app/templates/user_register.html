@@ -9,7 +9,8 @@
             <span class="close-btn" onclick="closeFloatingWindow()">×</span>
         </div>
         <div class="layui-card-body">
-            <p>在注册前，请先阅读 <a href="https://github.com/hexone2086/cxgc_server_wiki" target="_blank" class="guide-link">服务器使用指南</a>。</p>
+            <p>在注册前，请先阅读 <a href="https://github.com/hexone2086/cxgc_server_wiki" target="_blank"
+                    class="guide-link">服务器使用指南</a>。</p>
         </div>
     </div>
 </div>
@@ -21,15 +22,23 @@
         <form class="layui-form" method="POST">
             {{ form.hidden_tag() }}
             <div class="layui-form-item">
-                <label class="layui-form-label">用户名</label>
+                <label class="layui-form-label">姓名</label>
                 <div class="layui-input-block">
-                    {{ form.username(class="layui-input", placeholder="请输入用户名") }}
+                    {{ form.username(class="layui-input", placeholder="请输入真实姓名（中文）") }}
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">邮箱</label>
                 <div class="layui-input-block">
                     {{ form.email(class="layui-input", placeholder="请输入邮箱") }}
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">验证码</label>
+                <div class="layui-input-block">
+                    <input type="text" name="captcha_text" class="layui-input" placeholder="请输入验证码">
+                    <input type="hidden" name="captcha_id" value="{{ captcha.hash }}">
+                    <img src="data:image/jpeg;base64,{{ captcha.img }}" alt="captcha">
                 </div>
             </div>
             <div class="layui-form-item">
@@ -44,84 +53,86 @@
 
 {% block extra_css %}
 <style>
-/* 飘窗样式 */
-.floating-window {
-    position: fixed;
-    width: 300px;
-    z-index: 9999;
-    transition: all 0.05s linear;
-}
+    /* 飘窗样式 */
+    .floating-window {
+        position: fixed;
+        width: 300px;
+        z-index: 9999;
+        transition: all 0.05s linear;
+    }
 
-/* 关闭按钮样式 */
-.close-btn {
-    float: right;
-    cursor: pointer;
-    font-size: 18px;
-    color: #999;
-}
+    /* 关闭按钮样式 */
+    .close-btn {
+        float: right;
+        cursor: pointer;
+        font-size: 18px;
+        color: #999;
+    }
 
-.close-btn:hover {
-    color: #333;
-}
+    .close-btn:hover {
+        color: #333;
+    }
 
-/* 高亮链接样式 */
-.guide-link {
-    color: #FF5722;
-    font-weight: bold;
-    text-decoration: underline;
-}
+    /* 高亮链接样式 */
+    .guide-link {
+        color: #FF5722;
+        font-weight: bold;
+        text-decoration: underline;
+    }
 
-.guide-link:hover {
-    color: #E64A19;
-}
+    .guide-link:hover {
+        color: #E64A19;
+    }
 </style>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-function closeFloatingWindow() {
-    document.querySelector('.floating-window').style.display = 'none';
-}
+    function closeFloatingWindow() {
+        document.querySelector('.floating-window').style.display = 'none';
+    }
 
-document.addEventListener('DOMContentLoaded', function() {
-    const floatingWindow = document.querySelector('.floating-window');
-    let posX = Math.random() * (window.innerWidth - 300);
-    let posY = Math.random() * (window.innerHeight - 200);
-    let dx = 2 + Math.random() * 2;
-    let dy = 2 + Math.random() * 2;
-    let animationFrame;
+    document.addEventListener('DOMContentLoaded', function () {
+        const floatingWindow = document.querySelector('.floating-window');
+        let posX = Math.random() * (window.innerWidth - 300);
+        let posY = Math.random() * (window.innerHeight - 200);
+        // let dx = 2 + Math.random() * 2;
+        // let dy = 2 + Math.random() * 2;
+        let dx = 1 + Math.random() * 2;
+        let dy = 1 + Math.random() * 2;
+        let animationFrame;
 
-    function moveWindow() {
-        const windowWidth = window.innerWidth;
-        const windowHeight = window.innerHeight;
+        function moveWindow() {
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
 
-        if (posX + 300 >= windowWidth || posX <= 0) {
-            dx = -dx;
+            if (posX + 300 >= windowWidth || posX <= 0) {
+                dx = -dx;
+            }
+            if (posY + 200 >= windowHeight || posY <= 0) {
+                dy = -dy;
+            }
+
+            posX += dx;
+            posY += dy;
+
+            floatingWindow.style.left = `${posX}px`;
+            floatingWindow.style.top = `${posY}px`;
+
+            animationFrame = requestAnimationFrame(moveWindow);
         }
-        if (posY + 200 >= windowHeight || posY <= 0) {
-            dy = -dy;
-        }
 
-        posX += dx;
-        posY += dy;
+        floatingWindow.addEventListener('mouseenter', () => {
+            cancelAnimationFrame(animationFrame);
+        });
+
+        floatingWindow.addEventListener('mouseleave', () => {
+            moveWindow();
+        });
 
         floatingWindow.style.left = `${posX}px`;
         floatingWindow.style.top = `${posY}px`;
-
-        animationFrame = requestAnimationFrame(moveWindow);
-    }
-
-    floatingWindow.addEventListener('mouseenter', () => {
-        cancelAnimationFrame(animationFrame);
-    });
-
-    floatingWindow.addEventListener('mouseleave', () => {
         moveWindow();
     });
-
-    floatingWindow.style.left = `${posX}px`;
-    floatingWindow.style.top = `${posY}px`;
-    moveWindow();
-});
 </script>
 {% endblock %}
